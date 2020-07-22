@@ -2,9 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
-
+using XEssentialsTest.Extensions;
 using XEssentialsTest.Models;
 using XEssentialsTest.Views;
 
@@ -36,6 +36,14 @@ namespace XEssentialsTest.ViewModels
 
             try
             {
+                var status = await Permissions.CheckStatusAsync<BLEPermission>();
+                if (status != PermissionStatus.Granted)
+                {
+                    status = await Permissions.RequestAsync<BLEPermission>();
+                }
+
+                await Shell.Current.DisplayAlert("Status", status.ToString(), "Ok");
+
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
                 foreach (var item in items)
